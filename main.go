@@ -3,8 +3,16 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
+	"log"
 	"net"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 const (
@@ -29,7 +37,6 @@ func main() {
 		if err != nil {
 			// handle error
 		}
-		defer conn.Close()
 		go handleConnection(conn)
 	}
 	//net.TCPAddr
@@ -37,7 +44,7 @@ func main() {
 }
 
 func handleConnection(conn net.Conn) {
-	conn.Close()
+	defer conn.Close()
 	reader := bufio.NewReader(conn)
 	var jsonBuf bytes.Buffer
 	for {
@@ -57,5 +64,23 @@ func handleConnection(conn net.Conn) {
 }
 
 func saveDB(json []byte) {
-	fmt.Println(string(json))
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb+srv://admin:123456qq@cluster0-xxhko.azure.mongodb.net/test?retryWrites=true&w=majority"))
+	if err != nil {
+		log.Fatal(err)
+		fmt.Println(err)
+		// handle error
+	}
+	//ctx, _ = context.WithTimeout(context.Background(), 2*time.Second)
+	err = client.Ping(ctx, readpref.Primary())
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	collection := client.Database("testing").Collection("numbers")
+	res, err := collection.InsertOne(ctx, bson.M{"name": "pi", "value": 3.14159})
+	id := res.InsertedID
+	fmt.Println(id)
+	//client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://admin:<123456qq>@cluster0-xxhko.azure.mongodb.net/test?retryWrites=true&w=majority"))
+	//fmt.Println(string(json))
 }
