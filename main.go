@@ -8,17 +8,18 @@ import (
 )
 
 const (
-	ip   = "127.0.0.1"
+	ip   = "0.0.0.0"
 	port = 9099
 )
 
 func main() {
-	var tcp_addr net.TCPAddr
-	tcp_addr.IP = []byte(ip)
-	tcp_addr.Port = port
+	tcp_addr, err := net.ResolveTCPAddr("tcp4", "127.0.0.1:9099")
+	//var tcpaddr net.TCPAddr
+	//tcp_addr.IP = []byte(ip)
+	//tcp_addr.Port = port
 
-	tcp_listen, err := net.ListenTCP("tcp", &tcp_addr)
-	tcp_listen.Close()
+	tcp_listen, err := net.ListenTCP("tcp", tcp_addr)
+	defer tcp_listen.Close()
 	if err != nil {
 		fmt.Println("listen error")
 	}
@@ -28,7 +29,7 @@ func main() {
 		if err != nil {
 			// handle error
 		}
-		conn.Close()
+		defer conn.Close()
 		go handleConnection(conn)
 	}
 	//net.TCPAddr
@@ -55,4 +56,6 @@ func handleConnection(conn net.Conn) {
 	}
 }
 
-func saveDB(json []byte) {}
+func saveDB(json []byte) {
+	fmt.Println(string(json))
+}
