@@ -20,6 +20,7 @@ const (
 	port = 9099
 )
 
+//{"reqid":"请求web的唯一请求id","reqtime":"","host":"98.98.99.99","tag":["aa","bb"],"url":"","http_method":"","content_type":"","params":"","response":"","http_status":""}
 func main() {
 	tcp_addr, err := net.ResolveTCPAddr("tcp4", "127.0.0.1:9099")
 	//var tcpaddr net.TCPAddr
@@ -53,7 +54,9 @@ func handleConnection(conn net.Conn) {
 		if len(line) > 0 {
 			jsonBuf.Write(line)
 			if !isPrefix {
-				saveDB(jsonBuf.Bytes())
+				if checkLogFormat(jsonBuf.Bytes()) {
+					saveDB(jsonBuf.Bytes())
+				}
 				jsonBuf.Reset()
 			}
 		}
@@ -61,6 +64,10 @@ func handleConnection(conn net.Conn) {
 			break
 		}
 	}
+}
+
+func checkLogFormat(json []byte) bool {
+	return true
 }
 
 func saveDB(json []byte) {
