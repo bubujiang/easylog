@@ -1,0 +1,10 @@
+{
+    "db":"mongo",
+    "dsn":"mongodb://admin:Q12345678q@cluster0-shard-00-00-xxhko.azure.mongodb.net:27017,cluster0-shard-00-01-xxhko.azure.mongodb.net:27017,cluster0-shard-00-02-xxhko.azure.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority",
+    "database":"log",
+    "table":"logt",
+    "log_port":9090,
+    "log_ip":"127.0.0.1",
+    "db_pools":100,
+    "net":"tcp4"
+}
