@@ -1,10 +1,10 @@
 package db
 
-type DB2 struct {
-	DSN string
-	Database string
-	Table string
-}
+//type DB2 struct {
+//	DSN string
+//	Database string
+//	Table string
+//}
 
 type DB interface {
 	Connect()

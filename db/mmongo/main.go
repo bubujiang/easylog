@@ -21,22 +21,33 @@ type MMongo struct {
 	Database string `json:"database"`
 	Table string `json:"table"`
 	client *mongo.Collection
-	flag bool
+	conn *mongo.Client
+	//flag bool
 }
 
 func (db *MMongo)Init()  {
 	db.DSN = config.GConf.DSN
 	db.Database = config.GConf.Database
 	db.Table = config.GConf.DbTable
-	db.flag = AVAILABLE
+	//db.flag = AVAILABLE
+}
+
+func (db *MMongo) Validate() bool{
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	err := db.conn.Ping(ctx, readpref.Primary())
+	if err!=nil {
+		return false
+	}
+	return true
 }
 
 func (db *MMongo) Connect() {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	client, _ := mongo.Connect(ctx, options.Client().ApplyURI(db.DSN))
+	db.conn = client
 
 	ctx, _ = context.WithTimeout(context.Background(), 2*time.Second)
-	_ = client.Ping(ctx, readpref.Primary())
+	_ = db.Validate()
 
 	db.client = client.Database(db.Database).Collection(db.Table)
 }

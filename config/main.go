@@ -14,10 +14,15 @@ type Config struct {
 	DSN string `json:"dsn"`
 	Database string `json:"database"`
 	DbTable string `json:"table"`
-	DbPools uint32 `json:"db_pools"`
+	DbPools int `json:"db_pools"`
 
 	LogIp string `json:"log_ip"`
 	LogPort uint32 `json:"log_port"`
+
+	//LogAllowModule []string `json:"allow_module"`
+	//LogAllowTags []string `json:"allow_tags"`
+	LogAllow interface{} `json:"allow_search"`
+
 	Net string `json:"net"`
 }
 

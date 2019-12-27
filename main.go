@@ -2,16 +2,16 @@ package main
 
 import (
 	"log-server/config"
+	"log-server/db/mmongo"
 	MServer "log-server/server"
 )
 
-
-
 func main() {
-	var server MServer.Server
 	config.GConf.GetConfByFile()
-	server.Log.Start()
-	//server.Http.Start(conf)
+	mmongo.PoolsInit()
+	var server MServer.Server
+	server.Http.Start()
+	//server.Log.Start()
 }
 
 //func main() {

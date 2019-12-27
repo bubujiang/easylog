@@ -1,6 +1,6 @@
 package db
 
-type Pools interface {
-	GetClient() DB
-	PutClient(db DB)
-}
+//type Pools interface {
+//	GetClient() DB
+//	PutClient(db DB)
+//}
