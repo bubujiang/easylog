@@ -21,7 +21,7 @@ type Config struct {
 
 	//LogAllowModule []string `json:"allow_module"`
 	//LogAllowTags []string `json:"allow_tags"`
-	LogAllow interface{} `json:"allow_search"`
+	LogAllow map[string][]string `json:"allow_search"`
 
 	Net string `json:"net"`
 }

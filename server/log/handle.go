@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"log-server/db/mmongo"
 	"log-server/log"
 	"net"
 )
@@ -63,13 +62,13 @@ func _addMsg(msg []byte){
 		return
 	}
 	//从链接池获得数据库链接
-	var pools = new(mmongo.Pools)
-	pools.Init()
-	logData.Init(msg,pools.GetClient())
+	//var pools = new(mmongo.Pools)
+	//pools.Init()
+	//logData.Init(msg,pools.GetClient())
 	//logData.Client = pools.GetClient()
 	//调用日志对象的添加日志功能
-	logData.Add()
+	//ogData.Add()
 	//数据库链接放回链接池
-	pools.PutClient(logData.RClient())
+	//pools.PutClient(logData.RClient())
 }
 

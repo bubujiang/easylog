@@ -9,13 +9,14 @@ type Format struct {
 	Module string `json:"module"`
 	Tags []string `json:"tags"`
 	Time uint32 `json:"time"`
-	Content struct{
-		Url string `json:"url"`
-		Query map[string]interface{} `json:"query"`
-		Post map[string]interface{} `json:"post"`
-		Header map[string]interface{} `json:"header"`
-		Response interface{} `json:"resp"`
-	} `json:"content"`
+	//Content struct{
+	//	Url string `json:"url"`
+	//	Query map[string]interface{} `json:"query"`
+	//	Post map[string]interface{} `json:"post"`
+	//	Header map[string]interface{} `json:"header"`
+	//	Response interface{} `json:"resp"`
+	//} `json:"content"`
+	Content map[string]interface{} `json:"content"`
 	client db.DB
 }
 

@@ -8,6 +8,6 @@
     "http_port":9091,
     "http_ip":"127.0.0.1",
     "db_pools":100,
-    "net":"tcp4"
+    "net":"tcp4",
     "allow_search":{"module1":["tag1","tag2"],"module2":["tag1","tag2"]}
 }

@@ -226,11 +226,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 
-            <form>
-              <div class="form-row">
+            <form action="" method="post">
+              {{.moduleTags | ShowModulesTags}}
+              <!--<div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="module">模块</label>
-                  <select class="form-control" style="width: 100%;" id="module" name="module">
+                  <select class="form-control" style="width: 100%;" id="module" name="module" onchange="$('.tags').hide();$('#'+$(this).val()+'_tags').show();">
                     <option selected="selected">Alabama</option>
                     <option>Alaska</option>
                     <option>California</option>
@@ -240,7 +241,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <option>Washington</option>
                   </select>
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-6 tags" id="m_tags">
                   <label for="tags">Tag</label>
                   <select class="form-control" style="width: 100%;" id="tags" name="tag">
                     <option selected="selected">Alabama</option>
@@ -252,7 +253,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <option>Washington</option>
                   </select>
                 </div>
-              </div>
+              </div>-->
 
 
               <div class="form-row">
@@ -302,125 +303,23 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <thead>
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
+                <th scope="col">模块</th>
+                <th scope="col">tag</th>
+                <th scope="col">时间</th>
+                <th scope="col">内容</th>
               </tr>
               </thead>
               <tbody>
+              {{$m := .module}}
+              {{range $key, $value := .rows}}
               <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
+                <th scope="row">#</th>
+                <td>{{$m}}</td>
+                <td>{{$value.tags}}</td>
+                <td>{{$value.time}}</td>
+                <td>{{$value.content}}</td>
               </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr><tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr>
+              {{end}}
               </tbody>
             </table>
           </div>

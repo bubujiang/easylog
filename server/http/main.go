@@ -3,6 +3,8 @@ package http
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"html/template"
+	"log-server/html/cfun"
 )
 
 type Server struct {
@@ -16,16 +18,18 @@ func (server *Server) init(json []byte) {
 }
 
 func (server *Server) _start() {
-
-}
-
-func (server *Server) Start()  {
 	router := gin.Default()
 	router.Static("/dist", "html/dist")
 	router.Static("/plugins", "html/plugins")
+	router.SetFuncMap(template.FuncMap{
+		"ShowModulesTags": cfun.ShowModulesTags,
+	})
 	router.LoadHTMLGlob("html/tpl/*")
-	//router.LoadHTMLFiles("templates/template1.html", "templates/template2.html")
 	router.GET("/", index)
 	router.POST("/",index)
 	router.Run(":8080")
+}
+
+func (server *Server) Start()  {
+	server._start()
 }
