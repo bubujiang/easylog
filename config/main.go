@@ -1,57 +1,54 @@
 package config
 
 import (
-	"bufio"
-	"bytes"
 	"encoding/json"
-	"flag"
-	"io"
-	"os"
+	"gopkg.in/ini.v1"
 )
 
 type Config struct {
-	Db string `json:"db"`
-	DSN string `json:"dsn"`
-	Database string `json:"database"`
-	DbTable string `json:"table"`
-	DbPools int `json:"db_pools"`
-
-	LogIp string `json:"log_ip"`
-	LogPort uint32 `json:"log_port"`
-
-	//LogAllowModule []string `json:"allow_module"`
-	//LogAllowTags []string `json:"allow_tags"`
-	LogAllow map[string][]string `json:"allow_search"`
-
-	Net string `json:"net"`
-}
-
-
-func (config *Config)GetConfByFile() {
-	var path string
-	flag.StringVar(&path, "f", "config.cnf", "set configuration `file`")
-	//
-	file, _ := os.Open(path)
-	read := bufio.NewReader(file)
-	buffer := bytes.NewBuffer([]byte{})
-	for {
-		b, _, err := read.ReadLine()
-		if err != nil {
-			if err == io.EOF{
-				break
-			}
-			//panic(err)
-		}
-		buffer.Write(b)
+	HttpServer struct{
+		Ip string
+		Port uint64
+		Pid string
 	}
-	ret := make([]byte, buffer.Len())
-	buffer.Read(ret)
-	defer file.Close()
-	err:=json.Unmarshal(ret,&config)
-	if err!=nil {}
-	//return ret
+
+	LogServer struct{
+		Ip string
+		Port uint64
+		Pid string
+	}
+
+	Log struct{
+		ModulesTags map[string][]string
+	}
 }
 
-//var GConf *Config
-var GConf = new(Config)
+var Cnf Config
+
+func Init(file string) {
+	cfg, err := ini.Load(file)
+	if err != nil {
+		panic("file is not exist")
+	}
+	Cnf.HttpServer.Ip = cfg.Section("http-server").Key("ip").String()
+	Cnf.HttpServer.Port,err = cfg.Section("http-server").Key("port").Uint64()
+	if err != nil {
+		panic("log server port error")
+	}
+	Cnf.HttpServer.Pid = cfg.Section("http-server").Key("pid").String()
+
+	Cnf.LogServer.Ip = cfg.Section("log-server").Key("ip").String()
+	Cnf.LogServer.Port,err = cfg.Section("log-server").Key("port").Uint64()
+	if err != nil {
+		panic("http server port error")
+	}
+	Cnf.LogServer.Pid = cfg.Section("log-server").Key("pid").String()
+
+	err = json.Unmarshal(([]byte)(cfg.Section("log").Key("modules_tags").String()),&Cnf.Log.ModulesTags)
+	if err != nil {
+		panic("modules tags error")
+	}
+}
+
+
 

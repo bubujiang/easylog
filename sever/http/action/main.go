@@ -1,17 +1,12 @@
-package http
+package action
 
 import (
 	"context"
 	"encoding/json"
-	"log-server/config"
-	"log-server/db/mmongo"
+	"github.com/gin-gonic/gin"
+	"net/http"
 	"strings"
 	"time"
-
-	//"fmt"
-	"github.com/gin-gonic/gin"
-	//"log-server/db/mmongo"
-	"net/http"
 )
 
 func index (c *gin.Context) {
@@ -22,8 +17,8 @@ func index (c *gin.Context) {
 		"moduleTags": config.GConf.LogAllow,
 	}
 	if strings.ToLower(c.Request.Method) == "post" {
-	//isPost := c.DefaultPostForm("search","")
-	//if isPost=="search" {
+		//isPost := c.DefaultPostForm("search","")
+		//if isPost=="search" {
 		data := search(c)
 		for k ,v := range data { showData[k] = v }
 	} else {}
@@ -85,7 +80,7 @@ func search (c *gin.Context) gin.H {
 	//if c.
 	//time,_ := strconv.ParseInt(c.DefaultQuery("time","0"),10,32)
 
-//	c.JSON(200, gin.H{
-//		"message": "pong",
-//	})
+	//	c.JSON(200, gin.H{
+	//		"message": "pong",
+	//	})
 }
