@@ -3,18 +3,22 @@ package action
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	mconfig "log-server/config"
+	//pools "github.com/jolestar/go-commons-pool/v2"
+	mdb "log-server/db/mongodb"
 	"net/http"
 	"strings"
 	"time"
 )
 
-func index (c *gin.Context) {
+func Index (c *gin.Context) {
 	//strTime := c.DefaultQuery("time","0")
 	//if c.
 	//time,_ := strconv.ParseInt(c.DefaultQuery("time","0"),10,32)
 	showData := gin.H{
-		"moduleTags": config.GConf.LogAllow,
+		"moduleTags": mconfig.Cnf.Log.ModulesTags,
 	}
 	if strings.ToLower(c.Request.Method) == "post" {
 		//isPost := c.DefaultPostForm("search","")
@@ -37,9 +41,6 @@ func search (c *gin.Context) gin.H {
 	num := c.DefaultPostForm("num","10")
 	//endTime := c.DefaultPostForm("end_time","")
 
-	//fmt.Printf(startTime)
-	//fmt.Printf(endTime)
-	//
 	if module == "" || tag == "" {
 		return gin.H{}
 	}
@@ -53,14 +54,25 @@ func search (c *gin.Context) gin.H {
 	//	f["end_time"] = stamp.Unix()
 	//}
 	//
+	p := mdb.InitPool()
 	ctx := context.Background()
-	obj, err := mmongo.MPools.BorrowObject(ctx)
+
+	obj, err := p.BorrowObject(ctx)
 	if err != nil {
 		panic(err)
 	}
-	db := obj.(*mmongo.MMongo)
-	//return gin.H{}
-	rows := db.Find(f)
+
+	o := obj.(*mdb.Mongo)
+	rows := o.Operate.Find(f)
+	fmt.Println(o.s)
+
+	err = p.ReturnObject(ctx, obj)
+	if err != nil {
+		panic(err)
+	}
+
+
+
 
 	for k,v := range rows{
 		//time2 := v["time"].(int32)

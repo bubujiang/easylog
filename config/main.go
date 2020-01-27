@@ -21,15 +21,21 @@ type Config struct {
 	Log struct{
 		ModulesTags map[string][]string
 	}
+
+	DB struct{
+		DSN string
+		Database string
+	}
 }
 
-var Cnf Config
+var Cnf *Config
 
 func Init(file string) {
 	cfg, err := ini.Load(file)
 	if err != nil {
 		panic("file is not exist")
 	}
+	//cnf := &Config{}
 	Cnf.HttpServer.Ip = cfg.Section("http-server").Key("ip").String()
 	Cnf.HttpServer.Port,err = cfg.Section("http-server").Key("port").Uint64()
 	if err != nil {
@@ -44,7 +50,7 @@ func Init(file string) {
 	}
 	Cnf.LogServer.Pid = cfg.Section("log-server").Key("pid").String()
 
-	err = json.Unmarshal(([]byte)(cfg.Section("log").Key("modules_tags").String()),&Cnf.Log.ModulesTags)
+	err = json.Unmarshal(([]byte)(cfg.Section("log").Key("modules_tags").String()),Cnf.Log.ModulesTags)
 	if err != nil {
 		panic("modules tags error")
 	}
