@@ -6,12 +6,13 @@ import (
 	"log-server/config"
 	"sync"
 )
+var (
+	initialized sync.Once
+	P *pools.ObjectPool
+)
 
 type MongoFactory struct {
 }
-
-var (inited sync.Once
-	P *pools.ObjectPool)
 
 func (f *MongoFactory) MakeObject(ctx context.Context) (*pools.PooledObject, error) {
 	
@@ -53,8 +54,8 @@ func (f *MongoFactory) PassivateObject(ctx context.Context, object *pools.Pooled
 	return nil
 }
 
-func init() {
-	inited.Do(func() {
+func Init() {
+	initialized.Do(func() {
 		ctx := context.Background()
 		P = pools.NewObjectPoolWithDefaultConfig(ctx, &MongoFactory{})
 		P.Config.MaxTotal = config.Cnf.DB.Max

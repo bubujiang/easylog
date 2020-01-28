@@ -39,8 +39,10 @@ type Arguments struct {
 	action     actionType
 }
 
-var (Cnf *mconfig.Config)
+//var (Cnf *mconfig.Config)
+func init() {
 
+}
 func main() {
 
 	var (
@@ -63,7 +65,7 @@ func main() {
 			panic("action error")
 		}
 
-		Cnf = mconfig.Init("conf.ini")
+		mconfig.Init("conf.ini")
 		//mconfig.Init(args.configFile)
 
 		switch args.action {

@@ -3,9 +3,10 @@ package action
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	mconfig "log-server/config"
+	"strconv"
+
 	//pools "github.com/jolestar/go-commons-pool/v2"
 	mdb "log-server/db/mongodb"
 	"net/http"
@@ -14,20 +15,13 @@ import (
 )
 
 func Index (c *gin.Context) {
-	//strTime := c.DefaultQuery("time","0")
-	//if c.
-	//time,_ := strconv.ParseInt(c.DefaultQuery("time","0"),10,32)
 	showData := gin.H{
 		"moduleTags": mconfig.Cnf.Log.ModulesTags,
 	}
 	if strings.ToLower(c.Request.Method) == "post" {
-		//isPost := c.DefaultPostForm("search","")
-		//if isPost=="search" {
 		data := search(c)
 		for k ,v := range data { showData[k] = v }
 	} else {}
-	//isPost = bool(isPost)
-	//nick := c.DefaultPostForm("nick", "anonymous")
 
 	c.HTML(http.StatusOK, "index.html", showData)
 }
@@ -38,7 +32,10 @@ func search (c *gin.Context) gin.H {
 	tag := c.DefaultPostForm("tag","")
 	startTime := c.DefaultPostForm("start_time","")
 	page := c.DefaultPostForm("page","1")
-	num := c.DefaultPostForm("num","10")
+	num,err := strconv.ParseInt(c.DefaultPostForm("num","10"), 0, 64)
+	if err != nil{
+		num = 10
+	}
 	//endTime := c.DefaultPostForm("end_time","")
 
 	if module == "" || tag == "" {
@@ -54,7 +51,8 @@ func search (c *gin.Context) gin.H {
 	//	f["end_time"] = stamp.Unix()
 	//}
 	//
-	p := mdb.InitPool()
+	mdb.Init()
+	p := mdb.P
 	ctx := context.Background()
 
 	obj, err := p.BorrowObject(ctx)
@@ -62,9 +60,9 @@ func search (c *gin.Context) gin.H {
 		panic(err)
 	}
 
-	o := obj.(*mdb.Mongo)
-	rows := o.Operate.Find(f)
-	fmt.Println(o.s)
+	db := obj.(*mdb.Mongo)
+	rows := db.Find(f)
+	//fmt.Println(o.s)
 
 	err = p.ReturnObject(ctx, obj)
 	if err != nil {
@@ -85,7 +83,7 @@ func search (c *gin.Context) gin.H {
 	return gin.H{
 		"module":module,
 		"rows":rows,
-		"pages":db.Count(f)/num
+		"pages":db.Total(f)/num,
 	}
 	//fmt.Println(o.s)
 	//strTime := c.DefaultQuery("time","0")

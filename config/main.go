@@ -29,7 +29,7 @@ type Config struct {
 	}
 }
 
-var Cnf *Config
+var Cnf Config
 
 func Init(file string) {
 	cfg, err := ini.Load(file)
@@ -51,7 +51,7 @@ func Init(file string) {
 	}
 	Cnf.LogServer.Pid = cfg.Section("log-server").Key("pid").String()
 
-	err = json.Unmarshal(([]byte)(cfg.Section("log").Key("modules_tags").String()),Cnf.Log.ModulesTags)
+	err = json.Unmarshal(([]byte)(cfg.Section("log").Key("modules_tags").String()),&Cnf.Log.ModulesTags)
 	if err != nil {
 		panic("modules tags error")
 	}

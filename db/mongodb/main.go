@@ -52,7 +52,7 @@ func (db *Mongo) Find(resCond map[string]interface{}) []map[string]interface{} {
 	num,_ := strconv.ParseInt(resCond["num"].(string),10,64)
 	skipNum := (page - 1) * num
 
-	cond := db.mkCondition(resCond)
+	cond := mkCondition(resCond)
 
 	cur, err := collection.Find(ctx, cond, options.Find().SetLimit(num), options.Find().SetSkip(skipNum), options.Find().SetSort(bson.M{"time": -1}))
 	if err != nil { log.Fatal(err) }
@@ -81,13 +81,13 @@ func (db *Mongo) Total(resCond map[string]interface{}) int64 {
 	ctx, _ := context.WithTimeout(context.Background(), 30000000*time.Second)
 	collection := db.client.Collection(resCond["module"].(string))
 
-	cond := db.mkCondition(resCond)
+	cond := mkCondition(resCond)
 
 	total,_ := collection.CountDocuments(ctx,cond)
 	return total
 }
 
-func (db *Mongo) mkCondition(resCond map[string]interface{}) map[string]interface{} {
+func mkCondition(resCond map[string]interface{}) map[string]interface{} {
 	f := make(map[string]interface{})
 	f["tags"] = resCond["tags"]
 	startTime, oks := resCond["start_time"]
