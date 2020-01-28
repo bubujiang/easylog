@@ -25,6 +25,7 @@ type Config struct {
 	DB struct{
 		DSN string
 		Database string
+		Max int
 	}
 }
 
@@ -53,6 +54,13 @@ func Init(file string) {
 	err = json.Unmarshal(([]byte)(cfg.Section("log").Key("modules_tags").String()),Cnf.Log.ModulesTags)
 	if err != nil {
 		panic("modules tags error")
+	}
+
+	Cnf.DB.DSN = cfg.Section("db").Key("dsn").String()
+	Cnf.DB.Database = cfg.Section("db").Key("database").String()
+	Cnf.DB.Max,err = cfg.Section("db").Key("max").Int()
+	if err != nil {
+		panic("db max conn error")
 	}
 }
 

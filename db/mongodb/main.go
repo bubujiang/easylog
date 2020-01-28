@@ -11,12 +11,8 @@ import (
 	"time"
 )
 
-type Operate struct {
-	client *mongo.Database
-}
-
 type Mongo struct {
-	Operate *Operate
+	client *mongo.Database
 	DSN string
 	Database string
 }
@@ -24,7 +20,7 @@ type Mongo struct {
 func (db *Mongo) Connect() error{
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	client, _ := mongo.Connect(ctx, options.Client().ApplyURI(db.DSN))
-	db.Operate.client = client.Database(db.Database)
+	db.client = client.Database(db.Database)
 	if !db.Validate() {
 		//todo 返回错误
 		//return errors.Wrap(err, "read failed")
@@ -32,28 +28,31 @@ func (db *Mongo) Connect() error{
 	return nil
 }
 
-func (db *Mongo) Close() {
-
+func (db *Mongo) Close() error{
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	return db.client.Client().Disconnect(ctx)
 }
 
 func (db *Mongo) Validate() bool{
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	err := db.Operate.client.Client().Ping(ctx, readpref.Primary())
+	err := db.client.Client().Ping(ctx, readpref.Primary())
 	if err!=nil {
 		return false
 	}
 	return true
 }
 
-func (op *Operate) Find(resCond map[string]interface{}) []map[string]interface{} {
+
+
+func (db *Mongo) Find(resCond map[string]interface{}) []map[string]interface{} {
 
 	ctx, _ := context.WithTimeout(context.Background(), 30000000*time.Second)
-	collection := op.client.Collection(resCond["module"].(string))
+	collection := db.client.Collection(resCond["module"].(string))
 	page,_ := strconv.ParseInt(resCond["page"].(string),10,64)
 	num,_ := strconv.ParseInt(resCond["num"].(string),10,64)
 	skipNum := (page - 1) * num
 
-	cond := op.mkCondition(resCond)
+	cond := db.mkCondition(resCond)
 
 	cur, err := collection.Find(ctx, cond, options.Find().SetLimit(num), options.Find().SetSkip(skipNum), options.Find().SetSort(bson.M{"time": -1}))
 	if err != nil { log.Fatal(err) }
@@ -65,27 +64,30 @@ func (op *Operate) Find(resCond map[string]interface{}) []map[string]interface{}
 			log.Fatal(err)
 		}
 		result = append(result, row)
-
-		//var result bson.M
-		//err := cur.Decode(&result)
-		//if err != nil { log.Fatal(err) }
-		// do something with result....
 	}
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
 	}
 
-
-	//var a []map[string]interface{} //int array with length 3
-	//a[0] = b
 	return result
 }
 
-func (op *Operate) Insert() {
+func (db *Mongo) Insert() {
 
 }
 
-func (op *Operate) mkCondition(resCond map[string]interface{}) map[string]interface{} {
+func (db *Mongo) Total(resCond map[string]interface{}) int64 {
+
+	ctx, _ := context.WithTimeout(context.Background(), 30000000*time.Second)
+	collection := db.client.Collection(resCond["module"].(string))
+
+	cond := db.mkCondition(resCond)
+
+	total,_ := collection.CountDocuments(ctx,cond)
+	return total
+}
+
+func (db *Mongo) mkCondition(resCond map[string]interface{}) map[string]interface{} {
 	f := make(map[string]interface{})
 	f["tags"] = resCond["tags"]
 	startTime, oks := resCond["start_time"]

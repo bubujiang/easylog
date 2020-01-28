@@ -4,12 +4,14 @@ import (
 	"context"
 	pools "github.com/jolestar/go-commons-pool/v2"
 	"log-server/config"
-	"strconv"
-	"sync/atomic"
+	"sync"
 )
 
 type MongoFactory struct {
 }
+
+var (inited sync.Once
+	P *pools.ObjectPool)
 
 func (f *MongoFactory) MakeObject(ctx context.Context) (*pools.PooledObject, error) {
 	
@@ -24,18 +26,21 @@ func (f *MongoFactory) MakeObject(ctx context.Context) (*pools.PooledObject, err
 	}
 	
 	return pools.NewPooledObject(
-			o.Operate),
+			o),
 		nil
 }
 
 func (f *MongoFactory) DestroyObject(ctx context.Context, object *pools.PooledObject) error {
 	// do destroy
+	o := object.Object.(*Mongo)
+	o.Close()
 	return nil
 }
 
 func (f *MongoFactory) ValidateObject(ctx context.Context, object *pools.PooledObject) bool {
 	// do validate
-	return true
+	o := object.Object.(*Mongo)
+	return o.Validate()
 }
 
 func (f *MongoFactory) ActivateObject(ctx context.Context, object *pools.PooledObject) error {
@@ -48,10 +53,10 @@ func (f *MongoFactory) PassivateObject(ctx context.Context, object *pools.Pooled
 	return nil
 }
 
-func InitPool() *pools.ObjectPool {
-	ctx := context.Background()
-	p := pools.NewObjectPoolWithDefaultConfig(ctx, &MongoFactory{})
-	p.Config.MaxTotal = 100
-
-	return p
+func init() {
+	inited.Do(func() {
+		ctx := context.Background()
+		P = pools.NewObjectPoolWithDefaultConfig(ctx, &MongoFactory{})
+		P.Config.MaxTotal = config.Cnf.DB.Max
+	})
 }
