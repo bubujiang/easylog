@@ -31,12 +31,13 @@ func search (c *gin.Context) gin.H {
 	module := c.DefaultPostForm("module","")
 	tag := c.DefaultPostForm("tag","")
 	startTime := c.DefaultPostForm("start_time","")
-	page := c.DefaultPostForm("page","1")
-	num,err := strconv.ParseInt(c.DefaultPostForm("num","10"), 0, 64)
+	page := c.DefaultQuery("page","1")
+	num,err := strconv.ParseInt(c.DefaultQuery("num","10"), 0, 64)
 	if err != nil{
 		num = 10
 	}
-	//endTime := c.DefaultPostForm("end_time","")
+	num = 1
+	endTime := c.DefaultPostForm("end_time","")
 
 	if module == "" || tag == "" {
 		return gin.H{}
@@ -46,10 +47,10 @@ func search (c *gin.Context) gin.H {
 		stamp, _ := time.ParseInLocation("2006/01/02 15:04:05", startTime, time.Local) //使用parseInLocation将字符串格式化返回本地时区时间
 		f["start_time"] = stamp.Unix()
 	}
-	//if endTime!=""{
-	//	stamp, _ := time.ParseInLocation("2006/01/02 15:04:05", endTime, time.Local) //使用parseInLocation将字符串格式化返回本地时区时间
-	//	f["end_time"] = stamp.Unix()
-	//}
+	if endTime!=""{
+		stamp, _ := time.ParseInLocation("2006/01/02 15:04:05", endTime, time.Local) //使用parseInLocation将字符串格式化返回本地时区时间
+		f["end_time"] = stamp.Unix()
+	}
 	//
 	mdb.Init()
 	p := mdb.P
@@ -81,8 +82,12 @@ func search (c *gin.Context) gin.H {
 		//rows[k]["content"],_ = json.Marshal(v["content"])
 	}
 	return gin.H{
+		"start_time":startTime,
+		"end_time":endTime,
 		"module":module,
+		"tag":tag,
 		"rows":rows,
+		"page":page,
 		"pages":db.Total(f)/num,
 	}
 	//fmt.Println(o.s)

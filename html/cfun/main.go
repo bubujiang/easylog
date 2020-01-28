@@ -1,14 +1,34 @@
 package cfun
 
-import "html/template"
+import (
+	"html/template"
+)
 
-func ShowModulesTags(mt map[string][]string) template.HTML  {
+func ShowModulesTags(mt map[string][]string, cmodule interface{}, ctag interface{}) template.HTML  {
+	//if cmodule == nil {cmodule}
+	if _, ok := cmodule.(string); ok {
+		cmodule = cmodule.(string)
+	}else{
+		cmodule = ""
+	}
+
+	if _, ok := ctag.(string); ok {
+		ctag = ctag.(string)
+	}else{
+		ctag = ""
+	}
+
 	moduleHtml := `<div class="form-group col-md-6">
 					<label for="module">模块</label>
 					<select class="form-control" style="width: 100%;" id="module" name="module" onchange="$('.tags').hide();$('#'+$(this).val()+'_tags').show();">`
 	tagsHtml := ``
 	for module, tags := range mt {
-		moduleHtml += `<option value="`+module+`">`+module+`</option>`
+		if cmodule == module {
+			moduleHtml += `<option value="`+module+`" selected="selected">`+module+`</option>`
+		}else{
+			moduleHtml += `<option value="`+module+`">`+module+`</option>`
+		}
+
 		if tagsHtml == "" {
 			tagsHtml += `<div class="form-group col-md-6 tags" id="`+module+`_tags">`
 		} else {

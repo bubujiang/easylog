@@ -49,7 +49,8 @@ func (db *Mongo) Find(resCond map[string]interface{}) []map[string]interface{} {
 	ctx, _ := context.WithTimeout(context.Background(), 30000000*time.Second)
 	collection := db.client.Collection(resCond["module"].(string))
 	page,_ := strconv.ParseInt(resCond["page"].(string),10,64)
-	num,_ := strconv.ParseInt(resCond["num"].(string),10,64)
+	num := resCond["num"].(int64)
+	//if a != nil {}
 	skipNum := (page - 1) * num
 
 	cond := mkCondition(resCond)

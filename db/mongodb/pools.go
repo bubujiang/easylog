@@ -18,7 +18,7 @@ func (f *MongoFactory) MakeObject(ctx context.Context) (*pools.PooledObject, err
 	
 	o := &Mongo{
 		DSN:      config.Cnf.DB.DSN,
-		Database: config.Cnf.DB.DSN,
+		Database: config.Cnf.DB.Database,
 	}
 
 	err := o.Connect()

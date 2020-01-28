@@ -226,8 +226,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 
-            <form action="" method="post">
-              {{.moduleTags | ShowModulesTags}}
+            <form action="" method="post" id="form">
+              {{ShowModulesTags .moduleTags .module .tag}}
               <!--<div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="module">模块</label>
@@ -265,7 +265,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control float-right" id="start_time" name="start_time">
+                    <input type="text" class="form-control float-right" id="start_time" name="start_time" value="{{.start_time}}">
                   </div>
                 </div>
 
@@ -277,7 +277,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <i class="far fa-calendar-alt"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control float-right" id="end_time" name="end_time">
+                    <input type="text" class="form-control float-right" id="end_time" name="end_time" value="{{.end_time}}">
                   </div>
                 </div>
               </div>
@@ -323,25 +323,27 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </tbody>
             </table>
           </div>
-          <div class="card-footer text-muted">
-            <nav aria-label="Page navigation example">
-              <ul class="pagination">
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
+            <div class="card-footer text-muted">
+              <ul id="page"></ul>
+              <!--<nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>-->
+            </div>
+
         </div>
 
         <!-- /.row -->
@@ -386,6 +388,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="plugins/daterangepicker/daterangepicker.js"></script>
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script type="text/javascript" src="plugins/bootstrap-paginator/src/bootstrap-paginator.js"></script>
 <script>
   $(function () {
 
@@ -411,6 +414,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
         format: 'YYYY/MM/DD HH:mm:ss'
       }
     })
+
+    $('#page').bootstrapPaginator({
+      bootstrapMajorVersion: 4,//bootstrap版本
+      currentPage: {{.page}},//当前页码
+      totalPages: {{.pages}},//总页数（后台传过来的数据）
+      numberOfPages: 5,//一页显示几个按钮
+      onPageClicked: function (event, originalEvent, type, page) {
+        $("#form").attr("action","/?page="+page)
+        $("#form").submit()
+        //console.log(event, originalEvent, type, page)
+      }
+    });
 
   })
 </script>
