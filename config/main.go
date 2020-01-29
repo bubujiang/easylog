@@ -16,6 +16,7 @@ type Config struct {
 		Ip string
 		Port uint64
 		Pid string
+		Net string
 	}
 
 	Log struct{
@@ -50,6 +51,7 @@ func Init(file string) {
 		panic("http server port error")
 	}
 	Cnf.LogServer.Pid = cfg.Section("log-server").Key("pid").String()
+	Cnf.LogServer.Net = cfg.Section("log-server").Key("net").String()
 
 	err = json.Unmarshal(([]byte)(cfg.Section("log").Key("modules_tags").String()),&Cnf.Log.ModulesTags)
 	if err != nil {

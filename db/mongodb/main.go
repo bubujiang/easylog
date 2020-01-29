@@ -2,6 +2,7 @@ package mongodb
 
 import (
 	"context"
+	"encoding/json"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -73,8 +74,19 @@ func (db *Mongo) Find(resCond map[string]interface{}) []map[string]interface{} {
 	return result
 }
 
-func (db *Mongo) Insert() {
-
+func (db *Mongo) Insert(b interface{}) bool {
+	ctx, _ := context.WithTimeout(context.Background(), 5000000000*time.Second)
+	m := make(map[string]interface{})
+	j, _ := json.Marshal(b)//编码
+	json.Unmarshal(j, &m)//解码
+	module := m["module"].(string)
+	delete(m,"module")
+	_,err := db.client.Collection(module).InsertOne(ctx, m)
+	if err!=nil{
+		return false
+	}
+	//id := res.InsertedID
+	return true
 }
 
 func (db *Mongo) Total(resCond map[string]interface{}) int64 {
