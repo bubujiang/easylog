@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"html/template"
 	"log-server/html/cfun"
-	"log-server/sever/http/action"
+	"log-server/server/http/action"
 )
 
 type Server struct {

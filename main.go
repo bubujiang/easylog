@@ -4,8 +4,8 @@ import (
 	cli "github.com/jawher/mow.cli"
 	mconfig "log-server/config"
 	"log-server/market"
-	mhttp "log-server/sever/http"
-	mlog "log-server/sever/log"
+	mhttp "log-server/server/http"
+	mlog "log-server/server/log"
 	"os"
 )
 
